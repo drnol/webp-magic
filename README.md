@@ -1,7 +1,13 @@
-webp-magic
+WebP-Magic
 ==========
 
 A simple application which is create animated WebP from screen capture.
+
+Just click "start button" and little bit wait and click "stop button".
+Then animated webp(output.webp) will be created.
+
+Yet "export button" is useless.
+
 
 
 
@@ -15,6 +21,14 @@ webpmux tool : https://developers.google.com/speed/webp/download/
 
 
 
+
 Current status
 ==============
-Yet simple sketch.
+Just a simple sketch.
+
+
+
+
+Screenshots
+===========
+![demo.png](https://raw.githubusercontent.com/drnol/webp-magic/master/screenshots/demo.png)
