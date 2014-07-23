@@ -17,4 +17,4 @@ webpmux tool : https://developers.google.com/speed/webp/download/
 
 Current status
 ==============
-Yet simple skeleton.
+Yet simple sketch.
