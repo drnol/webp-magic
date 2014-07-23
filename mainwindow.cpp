@@ -24,8 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     timer = NULL;
-    frame_interval = 1000/20; // default: 24fps
+    frame_interval = 1000/24; // default: 24fps
 
+    setWindowFlags(Qt::WindowStaysOnTopHint);
     ui->setupUi(this);
 }
 
