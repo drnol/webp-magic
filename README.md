@@ -34,3 +34,5 @@ Just a simple sketch.
 Screenshots
 ===========
 ![demo.png](https://raw.githubusercontent.com/drnol/webp-magic/master/screenshots/demo.png)
+
+![usage.webp](https://github.com/drnol/webp-magic/blob/master/screenshots/usage.webp)
