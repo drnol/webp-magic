@@ -20,3 +20,11 @@ HEADERS  += mainwindow.h
 FORMS    += mainwindow.ui
 
 QTPLUGIN += libqwebp
+
+OTHER_FILES += \
+    res/play.png \
+    res/save.png \
+    res/stop.png
+
+RESOURCES += \
+    res.qrc

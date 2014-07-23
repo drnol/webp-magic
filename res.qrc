@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/wm">
+        <file>res/play.png</file>
+        <file>res/save.png</file>
+        <file>res/stop.png</file>
+    </qresource>
+</RCC>
