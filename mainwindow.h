@@ -44,12 +44,17 @@ private slots:
     void on_actionExport_triggered();
     void mux(int count, int interval);
 
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
 private:
     Ui::MainWindow *ui;
     int frame_interval;
     int capture_num;
     QTimer *timer;
     QList<QImage> *frames;
+    int m_nMouseClick_X_Coordinate;
+    int m_nMouseClick_Y_Coordinate;
 };
 
 #endif // MAINWINDOW_H
