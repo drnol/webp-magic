@@ -15,6 +15,8 @@
 #include <QToolButton>
 #include <QScreen>
 #include <QPixmap>
+#include <QList>
+#include <QListIterator>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     timer = NULL;
-    frame_interval = 1000/24; // default: 24fps
+    frame_interval = 1000/20; // default: 24fps
 
     ui->setupUi(this);
 }
@@ -30,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::resizeEvent(QResizeEvent*)
 {
     QRegion full(rect().left(),rect().top(),rect().width(),rect().height(),QRegion::Rectangle);
-    QRegion internal(rect().left()+5,rect().top()+30,rect().width()-10,rect().height()-35,QRegion::Rectangle);
+    QRegion internal(rect().left()+5,rect().top()+60,rect().width()-10,rect().height()-65,QRegion::Rectangle);
     QRegion clipped = full.xored(internal);
 
     setMask(clipped);
@@ -60,8 +62,8 @@ void MainWindow::start_capture()
 {
     if(timer == NULL)
     {
-        capture_num=0;
         timer = new QTimer(this);
+        frames = new QList<QImage>();
         connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
         timer->start(frame_interval);
     }
@@ -69,9 +71,27 @@ void MainWindow::start_capture()
 
 void MainWindow::tick()
 {
-    QString path = QString("./tmp-%1.png").arg(QString::number(this->capture_num));
-    capture(path);
-    capture_num++;
+    capture();
+}
+
+void MainWindow::mux(int count, int interval)
+{
+    QStringList args;
+    QString intarg = QString("+%1+0+0").arg(QString::number(interval));
+    for(int i=0; i<count; i++)
+    {
+        QString path = QString("./tmp-%1.webp").arg(QString::number(i));
+        args.append("-frame");
+        args.append(path);
+        args.append(intarg);
+    }
+
+    args.append("-loop");
+    args.append("0");
+    args.append("-o");
+    args.append("output.webp");
+
+    QProcess::execute("webpmux", args);
 }
 
 void MainWindow::end_capture()
@@ -81,23 +101,38 @@ void MainWindow::end_capture()
     {
         timer->stop();
         delete timer;
+
+        // save to webp file
+        QListIterator<QImage> itr(*frames);
+
+        int i = 0;
+        while(itr.hasNext())
+        {
+            QString path = QString("./tmp-%1.webp").arg(QString::number(i));
+            qDebug() << path;
+            itr.next().save(path,"webp",80);
+            i++;
+        }
+
+        // mux
+
+        this->mux(frames->count(), frame_interval);
+
+        delete frames;
+        frames = NULL;
         timer = NULL;
     }
 }
 
-// TODO: change save format from '.png' to '.webp'
-void MainWindow::capture(QString &path)
+void MainWindow::capture()
 {
-    qDebug() << path;
-    QImageWriter imgWriter(path,"png");
-    QImage PngImage;
+    qDebug() << QString("Capture frame %1").arg(QString::number(frames->count()));
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QPixmap snapshot = screen->grabWindow(this->winId(),
-                                           rect().left()+5,rect().top()+30,
-                                           rect().width()-10,rect().height()-35);
-    PngImage = snapshot.toImage();
-    imgWriter.write(PngImage);
+                                           rect().left()+5,rect().top()+60,
+                                           rect().width()-10,rect().height()-65);
+    frames->append(snapshot.toImage());
 }
 
 // TODO: mux created temporal '.webp' files

@@ -12,6 +12,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QList>
+#include <QImage>
 
 namespace Ui {
 class MainWindow;
@@ -35,17 +37,19 @@ private slots:
 
     void start_capture();
     void end_capture();
-    void capture(QString &path);
+    void capture();
 
     void tick();
 
     void on_actionExport_triggered();
+    void mux(int count, int interval);
 
 private:
     Ui::MainWindow *ui;
     int frame_interval;
     int capture_num;
     QTimer *timer;
+    QList<QImage> *frames;
 };
 
 #endif // MAINWINDOW_H
