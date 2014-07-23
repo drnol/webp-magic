@@ -19,12 +19,14 @@ plugin for webp : https://qt.gitorious.org/qt/qtimageformats/
 
 webpmux tool : https://developers.google.com/speed/webp/download/
 
-
+Recommended platform is Linux.
+(Other platforms are not tested.)
 
 
 Current status
 ==============
 Just a simple sketch.
+
 
 
 
