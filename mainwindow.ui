@@ -17,25 +17,6 @@
    <double>1.000000000000000</double>
   </property>
   <widget class="QWidget" name="centralWidget"/>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>400</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuWebP_Magic">
-    <property name="title">
-     <string>WebP Magic</string>
-    </property>
-    <addaction name="actionFramerate"/>
-    <addaction name="actionExport"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <addaction name="menuWebP_Magic"/>
-  </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="windowTitle">
     <string/>

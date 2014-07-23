@@ -17,6 +17,7 @@
 #include <QPixmap>
 #include <QList>
 #include <QListIterator>
+#include <QDesktopWidget>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -28,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     frame_interval = 1000/24; // default: 24fps
 
     ui->setupUi(this);
-    setWindowFlags(Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     setStyleSheet("background-color: blue;");
 }
 
@@ -134,9 +135,19 @@ void MainWindow::capture()
     qDebug() << QString("Capture frame %1").arg(QString::number(frames->count()));
 
     QScreen *screen = QGuiApplication::primaryScreen();
+
+#ifdef Q_OS_WIN32
+    qDebug() << QString("Q_WS_WIN");
+    QPixmap snapshot = screen->grabWindow(QApplication::desktop()->winId(),
+                                          this->pos().x()+5,this->pos().y()+60,
+                                           rect().width()-10,rect().height()-65);
+#endif
+#ifndef Q_OS_WIN32
+    qDebug() << QString("Q_WS_NOT_WIN");
     QPixmap snapshot = screen->grabWindow(this->winId(),
                                            rect().left()+5,rect().top()+60,
                                            rect().width()-10,rect().height()-65);
+#endif
     frames->append(snapshot.toImage());
 }
 

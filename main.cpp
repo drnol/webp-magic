@@ -10,6 +10,9 @@
 
 #include "mainwindow.h"
 #include <QApplication>
+//#include <QtPlugin>
+
+//Q_IMPORT_PLUGIN(qlibwebp)
 
 int main(int argc, char *argv[])
 {
