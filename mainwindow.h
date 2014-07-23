@@ -55,6 +55,7 @@ private:
     QList<QImage> *frames;
     int m_nMouseClick_X_Coordinate;
     int m_nMouseClick_Y_Coordinate;
+    bool moving;
 };
 
 #endif // MAINWINDOW_H

@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    moving = false;
     timer = NULL;
     frame_interval = 1000/24; // default: 24fps
 
@@ -33,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::resizeEvent(QResizeEvent*)
 {
+    moving = false;
+
     QRegion full(rect().left(),rect().top(),rect().width(),rect().height(),QRegion::Rectangle);
     QRegion internal(rect().left()+5,rect().top()+60,rect().width()-10,rect().height()-65,QRegion::Rectangle);
     QRegion clipped = full.xored(internal);
@@ -144,10 +147,12 @@ void MainWindow::on_actionExport_triggered()
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
+    moving = true;
     m_nMouseClick_X_Coordinate = event->x();
     m_nMouseClick_Y_Coordinate = event->y();
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-    move(event->globalX()-m_nMouseClick_X_Coordinate,event->globalY()-m_nMouseClick_Y_Coordinate);
+    if(moving)
+        move(event->globalX()-m_nMouseClick_X_Coordinate,event->globalY()-m_nMouseClick_Y_Coordinate);
 }
