@@ -26,8 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = NULL;
     frame_interval = 1000/24; // default: 24fps
 
-    setWindowFlags(Qt::WindowStaysOnTopHint);
     ui->setupUi(this);
+    setWindowFlags(Qt::WindowStaysOnTopHint);
+    setStyleSheet("background-color: blue;");
 }
 
 void MainWindow::resizeEvent(QResizeEvent*)
