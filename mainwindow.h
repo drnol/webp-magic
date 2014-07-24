@@ -14,6 +14,8 @@
 #include <QMainWindow>
 #include <QList>
 #include <QImage>
+#include <QThread>
+#include <QProgressBar>
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +29,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     virtual void resizeEvent(QResizeEvent*);
     ~MainWindow();
+    void export_process();
 
 private slots:
     void on_actionFramerate_triggered();
@@ -47,6 +50,8 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
+    void update_progress();
+
 private:
     Ui::MainWindow *ui;
     int frame_interval;
@@ -57,6 +62,8 @@ private:
     int m_nMouseClick_X_Coordinate;
     int m_nMouseClick_Y_Coordinate;
     bool moving;
+    QThread *export_thread;
+    QProgressBar *progressBar;
 };
 
 #endif // MAINWINDOW_H

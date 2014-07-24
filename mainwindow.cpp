@@ -18,8 +18,21 @@
 #include <QList>
 #include <QListIterator>
 #include <QDesktopWidget>
+#include <QThread>
+#include <QStatusBar>
 
 const int TOP_MARGIN = 70;
+const int BOT_MARGIN = 22;
+
+class ExportThread:public QThread {
+    MainWindow *owner;
+
+public:
+    ExportThread(MainWindow *owner) { this->owner = owner; }
+    virtual void run() {
+        owner->export_process();
+    }
+};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,6 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+
+    ui->actionStart->setEnabled(true);
+    ui->actionEnd->setEnabled(false);
+    ui->actionExport->setEnabled(false);
+
     setStyleSheet("background-color: blue;");
     ui->qsBox->setStyleSheet("background-color: white;");
     ui->fpsBox->setStyleSheet("background-color: white;");
@@ -37,6 +55,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label->setStyleSheet("color: white;");
     ui->label_2->setStyleSheet("color: white;");
     ui->label_3->setStyleSheet("color: white;");
+
+    progressBar=new QProgressBar(ui->statusBar);
+    ui->statusBar->addWidget(progressBar);
+
+    export_thread = new ExportThread(this);
 }
 
 void MainWindow::resizeEvent(QResizeEvent*)
@@ -44,7 +67,7 @@ void MainWindow::resizeEvent(QResizeEvent*)
     moving = false;
 
     QRegion full(rect().left(),rect().top(),rect().width(),rect().height(),QRegion::Rectangle);
-    QRegion internal(rect().left()+5,rect().top()+TOP_MARGIN,rect().width()-10,rect().height()-TOP_MARGIN-5,QRegion::Rectangle);
+    QRegion internal(rect().left()+5,rect().top()+TOP_MARGIN,rect().width()-10,rect().height()-TOP_MARGIN-BOT_MARGIN,QRegion::Rectangle);
     QRegion clipped = full.xored(internal);
 
     setMask(clipped);
@@ -74,6 +97,9 @@ void MainWindow::start_capture()
 {
     if(timer == NULL)
     {
+        ui->actionStart->setEnabled(false);
+        ui->actionEnd->setEnabled(true);
+
         quality = this->ui->qsBox->value();
         frame_interval = 1000/this->ui->fpsBox->value();
 
@@ -109,33 +135,49 @@ void MainWindow::mux(int count, int interval)
     QProcess::execute("webpmux", args);
 }
 
+void MainWindow::export_process()
+{
+    progressBar->setMaximum(frames->count());
+    progressBar->setValue(0);
+
+    // save to webp file
+    QListIterator<QImage> itr(*frames);
+
+    int i = 0;
+    while(itr.hasNext())
+    {
+        QString path = QString("./tmp-%1.webp").arg(QString::number(i));
+        qDebug() << path;
+        itr.next().save(path,"webp",quality);
+        i++;
+    }
+
+    // mux
+
+    this->mux(frames->count(), frame_interval);
+
+    delete frames;
+    frames = NULL;
+
+    // unlock safe prevention --
+    ui->actionStart->setEnabled(true);
+    ui->actionEnd->setEnabled(false);
+    timer = NULL;
+}
+
+void MainWindow::update_progress()
+{
+    progressBar->setValue(progressBar->value()+1);
+}
+
 void MainWindow::end_capture()
 {
-
     if(timer != NULL)
     {
         timer->stop();
         delete timer;
 
-        // save to webp file
-        QListIterator<QImage> itr(*frames);
-
-        int i = 0;
-        while(itr.hasNext())
-        {
-            QString path = QString("./tmp-%1.webp").arg(QString::number(i));
-            qDebug() << path;
-            itr.next().save(path,"webp",quality);
-            i++;
-        }
-
-        // mux
-
-        this->mux(frames->count(), frame_interval);
-
-        delete frames;
-        frames = NULL;
-        timer = NULL;
+        export_thread->start();
     }
 }
 
@@ -148,12 +190,12 @@ void MainWindow::capture()
 #ifdef Q_OS_WIN32
     QPixmap snapshot = screen->grabWindow(QApplication::desktop()->winId(),
                                           this->pos().x()+5,this->pos().y()+TOP_MARGIN,
-                                           rect().width()-10,rect().height()-TOP_MARGIN-5);
+                                           rect().width()-10,rect().height()-TOP_MARGIN-BOT_MARGIN);
 #endif
 #ifndef Q_OS_WIN32
     QPixmap snapshot = screen->grabWindow(this->winId(),
                                            rect().left()+5,rect().top()+TOP_MARGIN,
-                                           rect().width()-10,rect().height()-TOP_MARGIN-5);
+                                           rect().width()-10,rect().height()-TOP_MARGIN-BOT_MARGIN);
 #endif
     frames->append(snapshot.toImage());
 }
