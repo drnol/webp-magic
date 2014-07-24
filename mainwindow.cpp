@@ -137,13 +137,11 @@ void MainWindow::capture()
     QScreen *screen = QGuiApplication::primaryScreen();
 
 #ifdef Q_OS_WIN32
-    qDebug() << QString("Q_WS_WIN");
     QPixmap snapshot = screen->grabWindow(QApplication::desktop()->winId(),
                                           this->pos().x()+5,this->pos().y()+60,
                                            rect().width()-10,rect().height()-65);
 #endif
 #ifndef Q_OS_WIN32
-    qDebug() << QString("Q_WS_NOT_WIN");
     QPixmap snapshot = screen->grabWindow(this->winId(),
                                            rect().left()+5,rect().top()+60,
                                            rect().width()-10,rect().height()-65);
