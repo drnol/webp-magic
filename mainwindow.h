@@ -50,6 +50,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     int frame_interval;
+    int quality;
     int capture_num;
     QTimer *timer;
     QList<QImage> *frames;
