@@ -52,6 +52,9 @@ private slots:
 
     void update_progress();
 
+signals:
+    void update_signal();
+
 private:
     Ui::MainWindow *ui;
     int frame_interval;

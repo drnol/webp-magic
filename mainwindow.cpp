@@ -20,6 +20,7 @@
 #include <QDesktopWidget>
 #include <QThread>
 #include <QStatusBar>
+#include <QObject>
 
 const int TOP_MARGIN = 70;
 const int BOT_MARGIN = 22;
@@ -60,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addWidget(progressBar);
 
     export_thread = new ExportThread(this);
+    QObject::connect(this, SIGNAL(update_signal()), this, SLOT(update_progress()));
 }
 
 void MainWindow::resizeEvent(QResizeEvent*)
@@ -137,9 +139,6 @@ void MainWindow::mux(int count, int interval)
 
 void MainWindow::export_process()
 {
-    progressBar->setMaximum(frames->count());
-    progressBar->setValue(0);
-
     // save to webp file
     QListIterator<QImage> itr(*frames);
 
@@ -150,6 +149,8 @@ void MainWindow::export_process()
         qDebug() << path;
         itr.next().save(path,"webp",quality);
         i++;
+
+        emit update_signal();
     }
 
     // mux
@@ -177,6 +178,8 @@ void MainWindow::end_capture()
         timer->stop();
         delete timer;
 
+        progressBar->setMaximum(frames->count());
+        progressBar->setValue(0);
         export_thread->start();
     }
 }
