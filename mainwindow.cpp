@@ -21,6 +21,7 @@
 #include <QThread>
 #include <QStatusBar>
 #include <QObject>
+#include <QSizeGrip>
 
 const int TOP_MARGIN = 70;
 const int BOT_MARGIN = 22;
@@ -58,7 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_3->setStyleSheet("color: white;");
 
     progressBar=new QProgressBar(ui->statusBar);
-    ui->statusBar->addWidget(progressBar);
+    ui->mainToolBar->addWidget(progressBar);
+    ui->statusBar->addWidget(new QSizeGrip(parent),1);
 
     export_thread = new ExportThread(this);
     QObject::connect(this, SIGNAL(update_signal()), this, SLOT(update_progress()));
