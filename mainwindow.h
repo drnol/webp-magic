@@ -52,6 +52,14 @@ private slots:
 
     void update_progress();
 
+    void on_actionLow_triggered();
+
+    void on_actionBest_triggered();
+
+    void on_actionHigh_triggered();
+
+    void on_actionNormal_triggered();
+
 signals:
     void update_signal();
 

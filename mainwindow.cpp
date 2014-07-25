@@ -58,12 +58,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_2->setStyleSheet("color: white;");
     ui->label_3->setStyleSheet("color: white;");
 
-    progressBar=new QProgressBar(ui->statusBar);
+    progressBar=new QProgressBar();
     ui->mainToolBar->addWidget(progressBar);
-    ui->statusBar->addWidget(new QSizeGrip(parent),1);
 
     export_thread = new ExportThread(this);
     QObject::connect(this, SIGNAL(update_signal()), this, SLOT(update_progress()));
+
+    QSizeGrip *sg = new QSizeGrip(this);
+    ui->statusBar->addWidget(sg, 1);
 }
 
 void MainWindow::resizeEvent(QResizeEvent*)
@@ -73,6 +75,8 @@ void MainWindow::resizeEvent(QResizeEvent*)
     QRegion full(rect().left(),rect().top(),rect().width(),rect().height(),QRegion::Rectangle);
     QRegion internal(rect().left()+5,rect().top()+TOP_MARGIN,rect().width()-10,rect().height()-TOP_MARGIN-BOT_MARGIN,QRegion::Rectangle);
     QRegion clipped = full.xored(internal);
+
+    ui->horizontalLayout->update();
 
     setMask(clipped);
 }
@@ -220,4 +224,28 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
     if(moving)
         move(event->globalX()-m_nMouseClick_X_Coordinate,event->globalY()-m_nMouseClick_Y_Coordinate);
+}
+
+void MainWindow::on_actionLow_triggered()
+{
+    ui->qsBox->setValue(60);
+    ui->fpsBox->setValue(16);
+}
+
+void MainWindow::on_actionBest_triggered()
+{
+    ui->qsBox->setValue(100);
+    ui->fpsBox->setValue(60);
+}
+
+void MainWindow::on_actionHigh_triggered()
+{
+    ui->qsBox->setValue(90);
+    ui->fpsBox->setValue(48);
+}
+
+void MainWindow::on_actionNormal_triggered()
+{
+    ui->qsBox->setValue(80);
+    ui->fpsBox->setValue(24);
 }
