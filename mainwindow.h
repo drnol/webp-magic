@@ -51,6 +51,7 @@ private slots:
     void mouseMoveEvent(QMouseEvent *event);
 
     void update_progress();
+    void export_finalize();
 
     void on_actionLow_triggered();
 
@@ -62,6 +63,7 @@ private slots:
 
 signals:
     void update_signal();
+    void finalize_signal();
 
 private:
     Ui::MainWindow *ui;

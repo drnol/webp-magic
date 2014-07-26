@@ -54,15 +54,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->qsBox->setStyleSheet("background-color: white;");
     ui->fpsBox->setStyleSheet("background-color: white;");
     ui->nameEdit->setStyleSheet("background-color: white;");
+    ui->speedBox->setStyleSheet("background-color: white;");
     ui->label->setStyleSheet("color: white;");
     ui->label_2->setStyleSheet("color: white;");
     ui->label_3->setStyleSheet("color: white;");
+    ui->label_4->setStyleSheet("color: white;");
 
     progressBar=new QProgressBar();
     ui->mainToolBar->addWidget(progressBar);
 
     export_thread = new ExportThread(this);
-    QObject::connect(this, SIGNAL(update_signal()), this, SLOT(update_progress()));
+    QObject::connect(this, SIGNAL(update_signal()), this, SLOT(update_progress()));    
+    QObject::connect(this, SIGNAL(finalize_signal()), this, SLOT(export_finalize()));
 
     QSizeGrip *sg = new QSizeGrip(this);
     ui->statusBar->addWidget(sg, 1);
@@ -160,16 +163,19 @@ void MainWindow::export_process()
     }
 
     // mux
-
-    this->mux(frames->count(), frame_interval);
+    this->mux(frames->count(), (float)frame_interval/ui->speedBox->value());
 
     delete frames;
     frames = NULL;
 
     // unlock safe prevention --
-    ui->actionStart->setEnabled(true);
-    ui->actionEnd->setEnabled(false);
+    emit finalize_signal();
     timer = NULL;
+}
+
+void MainWindow::export_finalize()
+{
+    ui->actionStart->setEnabled(true);
 }
 
 void MainWindow::update_progress()
@@ -183,6 +189,10 @@ void MainWindow::end_capture()
     {
         timer->stop();
         delete timer;
+
+        ui->actionStart->setEnabled(false);
+        ui->actionEnd->setEnabled(false);
+
 
         progressBar->setMaximum(frames->count());
         progressBar->setValue(0);
