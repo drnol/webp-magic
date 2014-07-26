@@ -209,12 +209,12 @@ void MainWindow::capture()
 
     QScreen *screen = QGuiApplication::primaryScreen();
 
-#ifdef Q_OS_WIN32
+#ifndef Q_OS_LINUX
     QPixmap snapshot = screen->grabWindow(QApplication::desktop()->winId(),
                                           this->pos().x()+5,this->pos().y()+TOP_MARGIN,
                                            rect().width()-10,rect().height()-TOP_MARGIN-BOT_MARGIN);
-#endif
-#ifndef Q_OS_WIN32
+#endif 
+#ifdef Q_OS_LINUX
     QPixmap snapshot = screen->grabWindow(this->winId(),
                                            rect().left()+5,rect().top()+TOP_MARGIN,
                                            rect().width()-10,rect().height()-TOP_MARGIN-BOT_MARGIN);
