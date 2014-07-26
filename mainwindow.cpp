@@ -22,6 +22,7 @@
 #include <QStatusBar>
 #include <QObject>
 #include <QSizeGrip>
+#include <QDir>
 
 const int TOP_MARGIN = 70;
 const int BOT_MARGIN = 22;
@@ -62,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     progressBar=new QProgressBar();
     ui->mainToolBar->addWidget(progressBar);
+
+    ui->nameEdit->setText(QDir::homePath()+"/output");
 
     export_thread = new ExportThread(this);
     QObject::connect(this, SIGNAL(update_signal()), this, SLOT(update_progress()));    
