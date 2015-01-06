@@ -16,6 +16,7 @@ Development Environment
 QT Creator + QT5 
 
 plugin for webp : https://qt.gitorious.org/qt/qtimageformats/
+(linux: build and created .so files to qt plugin folder such as '/usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats')
 
 webpmux tool : https://developers.google.com/speed/webp/download/
 
